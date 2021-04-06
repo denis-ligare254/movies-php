@@ -28,19 +28,34 @@ header("location:add-customer.php");
 <div class="container">
 <div class="row justify-content-center">
 <div class="col-sm-5">
-<form action="add-customer.php" method="post">
+<form action="add-product.php" method="post" enctype="multipart/form-data">
 
 <div class="form-group">
-<label>Names</label>
+<label>Title</label>
 <input type="text" class="form-control" name="names" required>
 </div>
 
 <div class="form-group">
-<label>Phone</label>
-<input type="tel" class="form-control" name="phone" required>
+<label>Description</label>
+<textarea class="form-control" name="description"></textarea>
 </div>
+<div class="form-group">
+<label>Genre</label>
+<select name="genre"  class="form-control">
+<options value="thriller">Thriler movies</options>
+<options value="commedy">Comedy movies</options>
+<options value="horror">Horror movies</options>
+<options value="action">Action MOvies</options>
+<options value="romance">Romance movies</options>
+</select>
+</div>
+<!-- POSTERS -->
+<div class="form-group">
+<label>posters</label>
+<input type="text" class="form-control-file border" name="poster" required>
 
-<button class="btn btn-success">Add customer</button>
+</div>
+<button class="btn btn-success">Add Movie</button>
 
 
 </form>
