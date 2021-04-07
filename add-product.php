@@ -1,16 +1,26 @@
 <?php
 
-if ( isset($_REQUEST["phone"]) )
+if ( isset($_REQUEST["title"]) )
 {
-$names = $_REQUEST["names"];
-$phone = $_REQUEST["phone"];
+$title = $_REQUEST["title"];
+$description = $_REQUEST["description"];
+$genre = $_REQUEST["genre"];
+$target_dir = "uploads/";
+$target_file = $target_dir . rand(1000000,10000000)."_".basename($_FILES["poster"]["name"]);
+$file_extension = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));//png jpg
 
+if (move_uploaded_file($_FILES["poster"]["tmp_name"], $target_file)) {
+//echo "Uploaded";
+$upload_status = 1; 
+}
 //connection DB
 require 'connect.php';
-$sql = "INSERT INTO `customers`(`id`, `names`, `phone`) VALUES (null,'names','phone')";
+$sql = "INSERT INTO `products`(`id`, `title`, `description`, `genre`, `poster`)
+ VALUES (null,'$title','$description','$genre','$target_file')";
+
 mysqli_query($con, $sql) or die(mysqli_error($con));
 
-header("location:add-customer.php");
+// header("location:add-product.php");
 }
 
 ?>
@@ -32,7 +42,7 @@ header("location:add-customer.php");
 
 <div class="form-group">
 <label>Title</label>
-<input type="text" class="form-control" name="names" required>
+<input type="text" class="form-control" name="title" required>
 </div>
 
 <div class="form-group">
@@ -42,17 +52,17 @@ header("location:add-customer.php");
 <div class="form-group">
 <label>Genre</label>
 <select name="genre"  class="form-control">
-<options value="thriller">Thriler movies</options>
-<options value="commedy">Comedy movies</options>
-<options value="horror">Horror movies</options>
-<options value="action">Action MOvies</options>
-<options value="romance">Romance movies</options>
+<option value="thriller">Thriler movies</option>
+<option value="commedy">Comedy movies</option>
+<option value="horror">Horror movies</option>
+<option value="action">Action MOvies</option>
+<option value="romance">Romance movies</option>
 </select>
 </div>
 <!-- POSTERS -->
 <div class="form-group">
 <label>posters</label>
-<input type="text" class="form-control-file border" name="poster" required>
+<input type="file" accept="image/*" class="form-control-file border" name="poster" required>
 
 </div>
 <button class="btn btn-success">Add Movie</button>
