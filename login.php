@@ -1,20 +1,43 @@
 <?php
-include 'protect.php';
+// displays the exact error in a php, helps in debbuging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL); 
+// end of debugging line of code
 if ( isset($_REQUEST["password"]) )
 {
-$names = $_REQUEST["names"];
 $email = $_REQUEST["email"];
 $password = $_REQUEST["password"];
-$password = password_hash($password, PASSWORD_BCRYPT);
+require "connect.php";
+// retrieve one record that matches the email
+// check the password hash
+// store the data in a session  where
+$query = mysqli_prepare($con, "SELECT *FROM users WHERE email = ?");
+mysqli_stmt_bind_param($query, "s",$email) or die(mysqli_stmt_error($query));
+mysqli_stmt_execute($query)or die(mysqli_stmt_error($query));
+$result = mysqli_stmt_get_result($query)or die(mysqli_stmt_error($query));
+if(mysqli_num_rows($result) ==1){
 
-//connection DB
-require 'connect.php';
-$sql = "INSERT INTO `users`(`id`, `names`, `email`, `password`) VALUES (null,'$names','$email','$password')";
-mysqli_query($con, $sql) or die(mysqli_error($con));
+ $user = mysqli_fetch_assoc($result);
 
-header("location:add-user.php");
+ $hash = $user["password"];
+ if(password_verify($password,$hash)){
+  session_start();
+ 
+  $_SESSION["names"] = $user["names"];
+  $_SESSION["id"] = $user["id"];
+  $_SESSION["logged_in"] = true;
+  header("location:add-product.php");
+    // success
+ }else{
+    setcookie("error","wrong username or password",time()+3);
+ }
+ 
+}else{
+    setcookie("error","wrong username or password",time()+3);
 }
 
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -33,14 +56,10 @@ header("location:add-user.php");
 <div class="container">
 <div class="row justify-content-center">
 <div class="col-sm-5">
-<h4>New User</h4>
-<form action="add-user.php" method="post">
+<h4>Sign In</h4>
+<form action="login.php" method="post">
 
 <div class="form-group">
-<label>Names</label>
-<input type="text" class="form-control" name="names" required>
-</div>
-
 <div class="form-group">
 <label>Email</label>
 <input type="email" class="form-control" name="email" required>
@@ -51,7 +70,7 @@ header("location:add-user.php");
 <input type="password" class="form-control" name="password" required>
 </div>
 
-<button class="btn btn-success">Add User</button>
+<button class="btn btn-success">Sign In</button>
 
 
 </form>
