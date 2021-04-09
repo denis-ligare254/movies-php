@@ -1,11 +1,20 @@
 <?php
 include 'protect.php';
 require 'connect.php';
-$sql = "SELECT * FROM products";
+$ids = array_unique($_SESSION["products"]);//[1,2,3]  == 1,2,3
+$string = implode("," , $ids);
+$sql = "SELECT * FROM products WHERE id IN($string)";
 $result = mysqli_query($con, $sql) or die(mysqli_error($con));// executing the query
 $rows = mysqli_fetch_all($result, 1);//assoc array
-
 mysqli_close($con);//close the connection
+
+if (isset($_GET["id"]))
+{
+    //remove a movie from the cart
+   $_SESSION["products"] = array_diff($_SESSION["products"], [ $_GET["id"] ] );
+   header("location:checkout.php");
+}
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -25,22 +34,6 @@ mysqli_close($con);//close the connection
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-sm-10">
-            <?php
-                  if (isset($_SESSION["products"]))
-                  $movie_count = count( array_unique($_SESSION["products"]) );
-                         //               
-              
-            ?>
- 
-            <div class="row border mt-2 mb-2 p-2">
-                <div class="col-6 m-auto text-center">
-                    You have <?= $movie_count ?? 0 ?> movies in the cart.
-                </div>
-     
-                <div class="col-6 text-center">
-                    <a href="checkout.php" class="btn btn-success btn-sm">Checkout</a>
-                </div>
-            </div>
 
             <table id="example" class="table table-striped table-bordered">
 
@@ -61,7 +54,7 @@ mysqli_close($con);//close the connection
                         <td> <?= $movie["genre"] ?> </td>
                         <td> <?= $movie["description"] ?> </td>
                         <td><img src="<?= $movie['poster'] ?>" width="60" height="60" alt="<?= $movie["title"] ?>"></td>
-                        <td><a class="btn btn-info btn-sm" href="add-to-cart.php?id=<?= $movie["id"] ?>">Add To Cart</a>
+                        <td><a class="btn btn-danger btn-sm" href="checkout.php?id=<?= $movie["id"] ?>">Remove From Cart</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
