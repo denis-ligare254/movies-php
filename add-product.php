@@ -40,7 +40,7 @@ if ( isset($_REQUEST["title"]) )
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-sm-5">
-            <h4>New Movie</h4>
+            <h4 class="text-center">New Movie</h4>
             <form action="add-product.php" method="post" enctype="multipart/form-data">
 
                 <div class="form-group">
